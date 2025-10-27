@@ -1,0 +1,126 @@
+/* Simplified CSS for Task2 gallery */
+:root{
+  --gap: 10px;
+  --header-height: 80px;
+  --header-height-mobile: 60px;
+  --caption-bg: rgba(0,0,0,0.6);
+  --caption-padding: 0.7rem 1rem;
+}
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  color:#fff;
+  background:#111;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* ---------- Header (unchanged) ---------- */
+header{
+  height:var(--header-height);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(90deg,#0f1724,#09203f);
+  box-shadow:0 6px 18px rgba(0,0,0,0.5);
+  position:sticky;
+  top:0;
+  z-index:10;
+}
+header h1{
+  margin:0;
+  font-size:clamp(1.1rem,1.6vw,2rem);
+  letter-spacing:-0.02em;
+  font-weight:700;
+}
+
+/* ---------- Layout: responsive grid ---------- */
+main.gallery-wrap{
+  min-height:calc(100vh - var(--header-height));
+  padding:var(--gap);
+}
+.gallery{
+  display:grid;
+  /* responsive columns: as screen grows, more columns fit */
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  grid-auto-rows:200px; /* fixed row height to keep cards uniform */
+  gap:var(--gap);
+}
+
+/* ---------- Cards (simplified hover translate) ---------- */
+.card{
+  position:relative;
+  overflow:hidden;
+  border-radius:12px;
+  background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(0,0,0,0.08));
+  box-shadow:0 6px 18px rgba(0,0,0,0.35);
+  transform:translateZ(0);
+  transition:transform 200ms ease, box-shadow 200ms ease;
+}
+.card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 14px 30px rgba(0,0,0,0.5);
+}
+
+/* Simplified inner structure (no 3D flip) */
+.flip-inner{
+  width:100%;height:100%;
+  position:relative;
+}
+.face{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden;
+}
+.front{z-index:2;}
+.back{display:none;} /* keep back hidden since flip removed */
+
+.front img{
+  width:100%;height:100%;object-fit:cover;display:block;
+}
+
+.caption-overlay{
+  position:absolute;
+  left:0;right:0;bottom:0;
+  padding:var(--caption-padding);
+  background:linear-gradient(180deg,rgba(0,0,0,0) 0%,var(--caption-bg) 50%);
+  transform:translateY(100%);
+  transition:transform 180ms ease,opacity 180ms ease;
+  opacity:0;color:#fff;font-size:clamp(.8rem,1.6vw,1rem);
+}
+.card:hover .caption-overlay{transform:translateY(0);opacity:1;}
+
+.back .back-content{
+  text-align:center;color:#fff;
+  font-size:clamp(.85rem,1.6vw,1.05rem);
+  line-height:1.3;
+}
+
+/* Remove complex hover/flip rules */
+.card.zoom:hover .front img,.card.flip.zoom:hover .front img{transform:none;}
+
+.card:focus-within{outline:3px solid rgba(255,255,255,0.12);outline-offset:-3px;}
+.label{
+  position:absolute;top:8px;left:8px;z-index:6;
+  font-size:.75rem;background:rgba(0,0,0,0.4);
+  padding:.25rem .45rem;border-radius:6px;color:#fff;
+  backdrop-filter:blur(3px);
+}
+
+/* ---------- Responsive adjustments ---------- */
+@media (max-width:900px){
+  .gallery{grid-template-columns:repeat(auto-fit,minmax(180px,1fr));grid-auto-rows:180px;}
+}
+@media (max-width:700px){
+  :root{--gap:6px;}
+  header{height:var(--header-height-mobile);} 
+  main.gallery-wrap{min-height:calc(100vh - var(--header-height-mobile));padding:6px;}
+  .gallery{gap:6px;}
+  header h1{font-size:1.05rem;padding:0 8px;text-align:center;}
+}
+@media (max-width:420px){
+  .gallery{grid-template-columns:repeat(auto-fit,minmax(120px,1fr));grid-auto-rows:140px;}
+}
+
+/* subtle background for back (unused but harmless) */
+.back{background:linear-gradient(180deg,#0b1220,#0b1a2a);}
